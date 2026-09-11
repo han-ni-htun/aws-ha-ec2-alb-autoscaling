@@ -396,6 +396,42 @@ This confirmed that the request-based scaling policy worked as expected.
 
 ---
 
+## Test Evidence
+
+### Application Running
+
+The Dashboard application is successfully reachable through the internet-facing Application Load Balancer and connected to the Counting service.
+
+![Working Dashboard](docs/screenshots/dashboard-working.png)
+
+### Auto Scaling Test
+
+During the load test, the Dashboard Auto Scaling Group scaled out from 2 instances to 4.
+
+![ASG Scale Out](docs/screenshots/asg-scale-out.png)
+
+### Load Test
+
+The load test was executed using `hey` with 100 concurrent requests for 5 minutes.
+
+```bash
+hey -z 5m -c 100 http://$(terraform output -raw dashboard_alb_dns_name)/
+```
+
+![Load Test Result 1](docs/screenshots/hey-load-test_1.png)
+
+![Load Test Result 2](docs/screenshots/hey-load-test_2.png)
+
+The application returned HTTP 200 responses throughout the test.
+
+### Target Health
+
+After scaling out, all 4 Dashboard targets were healthy.
+
+![Healthy Targets](docs/screenshots/target-group-healthy.png)
+
+---
+
 ## Bootstrap Troubleshooting
 
 During the first deployment, both target groups became unhealthy.
